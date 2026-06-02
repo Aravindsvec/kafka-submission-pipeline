@@ -1,0 +1,6 @@
+confluent-kafka
+pymongo
+python-dotenv
+fastapi
+uvicorn[standard]
+jinja2
