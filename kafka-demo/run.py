@@ -8,9 +8,6 @@ Starts:
   2. Launches the Kafka consumer in a background thread.
   3. Starts the FastAPI server (uvicorn) on http://localhost:8000
 
-Usage:
-    python run.py
-    python run.py --host 0.0.0.0 --port 8000
 """
 
 import sys
