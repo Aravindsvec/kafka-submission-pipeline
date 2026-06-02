@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ page_title }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">K</div>
+    Kafka Pipeline
+  </div>
+  <div class="header-sep"></div>
+  <div class="status-bar">
+    <span id="kafkaStatus"><span class="status-dot warn"></span>kafka: checking…</span>
+    <span id="mongoStatus"><span class="status-dot warn"></span>mongo: checking…</span>
+    <span id="topicLabel" style="font-size:10px;color:var(--text-dim);"></span>
+  </div>
+</header>
+
+<!-- Pipeline diagram -->
+<div class="pipeline">
+  <div class="pipe-node active">
+    <span class="icon">🖥</span>
+    <span class="label">UI Form</span>
+    <span class="sublabel">browser</span>
+  </div>
+  <div class="pipe-arrow"></div>
+  <div class="pipe-node">
+    <span class="icon">⚡</span>
+    <span class="label">FastAPI</span>
+    <span class="sublabel">POST /submit</span>
+  </div>
+  <div class="pipe-arrow"></div>
+  <div class="pipe-node">
+    <span class="icon">📤</span>
+    <span class="label">Producer</span>
+    <span class="sublabel">confluent-kafka</span>
+  </div>
+  <div class="pipe-arrow"></div>
+  <div class="pipe-node">
+    <span class="icon">🟠</span>
+    <span class="label">Kafka Broker</span>
+    <span class="sublabel">localhost:9092</span>
+  </div>
+  <div class="pipe-arrow"></div>
+  <div class="pipe-node">
+    <span class="icon">📥</span>
+    <span class="label">Consumer</span>
+    <span class="sublabel">background thread</span>
+  </div>
+  <div class="pipe-arrow"></div>
+  <div class="pipe-node">
+    <span class="icon">🍃</span>
+    <span class="label">MongoDB</span>
+    <span class="sublabel">kafka_submissions</span>
+  </div>
+</div>
+
+<!-- Main layout -->
+<div class="main">
+
+  <!-- Submit form -->
+  <div class="form-panel">
+    <div class="panel-title">Submit Data</div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="name">Full Name</label>
+        <input id="name" type="text" placeholder="Jane Smith" autocomplete="off" />
+        <span class="field-err" id="nameErr">Name is required</span>
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" placeholder="jane@example.com" autocomplete="off" />
+        <span class="field-err" id="emailErr">Valid email required</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="category">Category</label>
+      <select id="category">
+        <option value="">— Select category —</option>
+        <option value="support">Support Request</option>
+        <option value="feedback">Product Feedback</option>
+        <option value="bug">Bug Report</option>
+        <option value="feature">Feature Request</option>
+        <option value="billing">Billing Inquiry</option>
+        <option value="general">General Inquiry</option>
+      </select>
+      <span class="field-err" id="categoryErr">Please select a category</span>
+    </div>
+
+    <div class="field">
+      <label>Priority</label>
+      <div class="priority-group" id="priorityGroup">
+        <button class="priority-btn" data-v="low">Low</button>
+        <button class="priority-btn active" data-v="normal">Normal</button>
+        <button class="priority-btn" data-v="high">High</button>
+        <button class="priority-btn" data-v="urgent">Urgent</button>
+      </div>
+      <input type="hidden" id="priority" value="normal" />
+    </div>
+
+    <div class="field">
+      <label for="message">Message</label>
+      <textarea id="message" placeholder="Describe your request or feedback…"></textarea>
+      <span class="field-err" id="messageErr">Message is required</span>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <button class="submit-btn" id="submitBtn" onclick="submitForm()">
+      <span class="btn-text">Publish to Kafka →</span>
+    </button>
+  </div>
+
+  <!-- Submissions feed -->
+  <div class="feed-panel">
+    <div class="feed-header">
+      <div class="panel-title">Live Feed</div>
+      <div class="feed-count">Total: <strong id="totalCount">—</strong></div>
+      <button class="refresh-btn" onclick="loadSubmissions()">↻ Refresh</button>
+    </div>
+    <div class="feed-list" id="feedList">
+      <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <p>No submissions yet.<br>Submit data to see it appear here.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
